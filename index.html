@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ureceivealetter — Viết thư online, phong bì và tem cá nhân hóa</title>
+<meta name="description" content="Viết thư online: chọn phong bì, tem theo quốc gia, font tiếng Việt, hình dán, nét vẽ tay rồi gửi qua một đường dẫn riêng.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Lora:ital,wght@0,400;0,600;1,400&family=Caveat:wght@500;700&family=Playfair+Display:ital,wght@0,500;1,500&family=Roboto+Mono:wght@400&display=swap">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#FFF8EF;--ivory:#F5EBDD;--rose:#F5DDE2;--ink:#34312F;--cocoa:#795C50;--line:#e4d6c4;--glass:rgba(255,248,239,.62);--accent:#b2566e}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#2a2523;--ivory:#38302c;--rose:#4a3338;--ink:#f4ece2;--cocoa:#d2b7a8;--line:#51463f;--glass:rgba(48,40,38,.62);--accent:#e8a0b4}}
+:root[data-theme="dark"]{--bg:#2a2523;--ivory:#38302c;--rose:#4a3338;--ink:#f4ece2;--cocoa:#d2b7a8;--line:#51463f;--glass:rgba(48,40,38,.62);--accent:#e8a0b4}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*,*:before,*:after{box-sizing:inherit}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font:400 16px/1.65 'Be Vietnam Pro',system-ui,sans-serif;background-image:radial-gradient(circle at 15% 10%,var(--rose),transparent 40%),radial-gradient(circle at 90% 60%,#d7e7f366,transparent 40%)}
+h1,h2,h3{font-family:'Playfair Display','Lora',serif;font-weight:500;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(2rem,6vw,3.6rem)}h2{font-size:1.7rem}h3{font-size:1.15rem}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;margin:10px auto 0;max-width:960px;width:calc(100% - 20px);display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 16px;border-radius:999px;background:var(--glass);backdrop-filter:blur(14px) saturate(1.4);-webkit-backdrop-filter:blur(14px) saturate(1.4);border:1px solid rgba(255,255,255,.5);box-shadow:0 6px 24px #795c5022}
+.logo{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--ink);text-decoration:none}
+nav{display:flex;gap:4px}
+nav button,.btn{font:500 .9rem 'Be Vietnam Pro',sans-serif;border:1px solid var(--line);background:transparent;color:var(--ink);padding:8px 14px;border-radius:999px;cursor:pointer}
+nav button[aria-current=page]{background:var(--ink);color:var(--bg)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+main{max-width:960px;margin:0 auto;padding:24px 16px 48px}
+.view{display:none}.view.on{display:block}
+.hero{display:grid;gap:28px;align-items:center;grid-template-columns:1fr;padding:24px 0}
+@media(min-width:820px){.hero{grid-template-columns:1fr 1fr}}
+.hero p{max-width:46ch;color:var(--cocoa)}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+.steps{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-top:30px}
+.step{padding:18px;border:1px dashed var(--cocoa);border-radius:6px;background:var(--ivory)}
+.stage{display:flex;flex-direction:column;align-items:center;gap:16px;min-width:0}
+.env{position:relative;width:min(340px,92vw);aspect-ratio:3/2;perspective:900px;cursor:pointer;transition:transform .3s;border:0;background:none;padding:0;font:inherit;color:#34312F;margin-top:70px}
+.env:hover{transform:rotate(-1.2deg) translateY(-3px)}
+.env.bounce{animation:bounce .5s}
+@keyframes bounce{40%{transform:translateY(-14px)}70%{transform:translateY(2px)}}
+.env .back,.env .front{position:absolute;inset:0;border-radius:4px;background-color:var(--ec);box-shadow:0 14px 28px #5a3c2e44,0 2px 4px #5a3c2e33;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.8' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 .4 0 0 0 0 .3 0 0 0 0 .2 0 0 0 .12 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E")}
+.env .front{clip-path:polygon(0 0,50% 58%,100% 0,100% 100%,0 100%);filter:brightness(.96);box-shadow:none}
+.env .flap{position:absolute;left:0;right:0;top:0;height:58%;background:var(--ec);clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;transition:transform .7s ease;filter:brightness(1.05);z-index:3}
+.env.open .flap{transform:rotateX(180deg);z-index:0}
+.env .ins{position:absolute;left:6%;right:6%;top:6%;bottom:6%;background:#fffdf8;border-radius:2px;transition:transform .8s .5s ease;z-index:1}
+.env.open .ins{transform:translateY(-55%)}
+.addr{position:absolute;z-index:4;left:7%;bottom:9%;font:600 1rem/1.5 'Lora','Be Vietnam Pro',Georgia,serif;color:#34312F;max-width:62%;text-align:left;overflow-wrap:anywhere}
+.addr small{display:block;font:400 .7rem 'Be Vietnam Pro',sans-serif;opacity:.7}
+.stampw{position:absolute;z-index:4;top:30%;right:6%;transform:rotate(3deg);width:58px}
+.stamp{padding:5px;background:#fffdf5;color:#34312F;text-align:center;font:500 .55rem/1.2 'Be Vietnam Pro',sans-serif;box-shadow:0 1px 3px #0004}
+.stamp .pic{aspect-ratio:4/5;display:grid;place-items:center;font-size:1.8rem;background:var(--sb)}
+.pm{position:absolute;z-index:5;top:34%;right:22%;width:62px;height:62px;border:2px solid #34312f99;border-radius:50%;display:grid;place-items:center;text-align:center;font:500 .5rem/1.2 'Be Vietnam Pro',sans-serif;color:#34312fcc;transform:rotate(-14deg);opacity:.75;padding:4px}
+.hint{font-size:.85rem;color:var(--cocoa)}
+.paper{position:relative;width:min(440px,100%);aspect-ratio:3/4;background-color:var(--pc,#fffdf8);border-radius:3px;box-shadow:0 10px 30px #5a3c2e33;overflow:hidden;background-image:linear-gradient(transparent 31px,#0000000d 32px);background-size:100% 32px}
+.paper .txt,.paper textarea{position:absolute;inset:0;width:100%;height:100%;padding:18px 22px;margin:0;border:0;background:transparent;resize:none;white-space:pre-wrap;overflow:auto;overflow-wrap:anywhere;color:var(--ic,#34312F);font-family:var(--ff);font-size:var(--fs);line-height:32px;outline:0}
+.paper canvas{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none}
+.paper.draw canvas{pointer-events:auto;touch-action:none;cursor:crosshair}
+.sk{position:absolute;z-index:3;transform:translate(-50%,-50%);line-height:1;cursor:grab;user-select:none;touch-action:none}
+.paper.view .sk{cursor:default}
+.composer{display:grid;gap:22px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:900px){.composer{grid-template-columns:300px minmax(0,1fr)}}
+.panel{background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:18px;padding:16px;display:grid;gap:12px;align-content:start}
+label{display:grid;gap:4px;font-size:.85rem;color:var(--cocoa)}
+input,select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px;width:100%}
+.sw{display:flex;gap:6px;flex-wrap:wrap}
+.sw button{width:30px;height:30px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--line);cursor:pointer;padding:0}
+.sw button[aria-pressed=true]{box-shadow:0 0 0 2px var(--ink)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.tabs .btn[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.emo{display:flex;flex-wrap:wrap;justify-content:center}
+.emo button{font-size:1.4rem;background:none;border:0;cursor:pointer;padding:4px;border-radius:8px}
+.status{font-size:.8rem;color:var(--cocoa)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;z-index:50;font-size:.9rem;max-width:90vw}
+.share{background:var(--ivory);border:1px dashed var(--cocoa);border-radius:10px;padding:12px;font-size:.85rem;width:100%;max-width:440px}
+.share input{margin:8px 0}
+.err{color:#b3261e}
+footer{max-width:960px;margin:0 auto;padding:24px 16px 40px;border-top:1px solid var(--line);color:var(--cocoa);font-size:.9rem}
+details{border-bottom:1px solid var(--line);padding:10px 0}summary{cursor:pointer;font-weight:500}
+.viewer header,.viewer footer{display:none}
+.paper.view{animation:rise .6s ease;aspect-ratio:auto;overflow:visible;min-height:calc(min(440px,100vw - 32px)*1.333)}
+.paper.view .txt{position:relative;inset:auto;width:100%;height:auto;overflow:visible}
+@keyframes rise{from{opacity:0;transform:translateY(40px)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+<a class="logo" href="#" data-go="home">ureceivealetter</a>
+<nav aria-label="Điều hướng chính"><button data-go="home">Trang chủ</button><button data-go="write">Viết thư</button><button data-go="guide">Hướng dẫn</button></nav>
+</header>
+<main>
+<section class="view" id="v-home">
+<div class="hero">
+<div>
+<h1>Some feelings deserve more than a message.</h1>
+<p>A little letter, a piece of your heart. Viết một lá thư, chọn phong bì và tem của riêng bạn, rồi gửi đi bằng một đường dẫn riêng.</p>
+<div class="row"><button class="btn primary" data-go="write">Write a Letter</button><button class="btn" data-go="guide">Cách hoạt động</button></div>
+</div>
+<div class="stage"><div id="heroEnv"></div><span class="hint">Chạm vào phong bì để mở thử</span></div>
+</div>
+<div class="steps">
+<div class="step"><h3>Create</h3>Nhập người gửi, người nhận và chọn trong 30 quốc gia để có tem phù hợp.</div>
+<div class="step"><h3>Personalize</h3>Chọn màu phong bì, font hỗ trợ tiếng Việt, hình dán và nét vẽ tay.</div>
+<div class="step"><h3>Send</h3>Tạo đường dẫn riêng và gửi qua ứng dụng nhắn tin.</div>
+</div>
+</section>
+<section class="view" id="v-write">
+<h2>Bàn viết thư</h2>
+<div class="composer">
+<div class="panel">
+<label>Từ (From)<input id="f" maxlength="40" placeholder="Linh"></label>
+<label>Đến (To)<input id="t" maxlength="40" placeholder="Kim"></label>
+<label>Quốc gia gửi<select id="fc"></select></label>
+<label>Quốc gia nhận<select id="tc"></select></label>
+<label>Mẫu tem trang trí<select id="st"></select></label>
+<div><div class="hint">Màu phong bì</div><div class="sw" id="ecs"></div></div>
+<div><div class="hint">Màu giấy</div><div class="sw" id="pcs"></div></div>
+<label>Font chữ<select id="ft"></select></label>
+<label>Cỡ chữ<input type="range" id="sz" min="14" max="26" value="19"></label>
+<div><div class="hint">Màu mực</div><div class="sw" id="ics"></div></div>
+</div>
+<div class="stage">
+<div class="tabs" role="group" aria-label="Chế độ">
+<button class="btn" id="mText" aria-pressed="true">Viết chữ</button>
+<button class="btn" id="mDraw" aria-pressed="false">Vẽ tay</button>
+<button class="btn" id="mUndo">Hoàn tác nét</button>
+<button class="btn" id="mClear">Xóa nét vẽ</button>
+</div>
+<div id="drawOpts" class="tabs" hidden><label style="display:flex;align-items:center;gap:6px">Nét <input type="range" id="pw" min="1" max="12" value="3" style="width:90px"></label><div class="sw" id="dcs"></div></div>
+<div class="paper" id="editPaper"></div>
+<div class="emo" id="emo" aria-label="Thêm hình dán"></div>
+<div class="status" id="status">Bản nháp tự động lưu trên trình duyệt này.</div>
+<div class="row" style="margin:0"><button class="btn" id="bPrev">Xem trước &amp; mở phong bì</button><button class="btn primary" id="bLink">Lưu &amp; tạo đường dẫn</button></div>
+<div id="shareBox" style="width:100%;display:flex;justify-content:center"></div>
+<div id="envPrev" class="stage"></div>
+</div>
+</div>
+</section>
+<section class="view" id="v-guide">
+<h2>Hướng dẫn</h2>
+<details open><summary>Đường dẫn riêng hoạt động thế nào?</summary><p>Ở phiên bản này, toàn bộ nội dung thư được mã hóa vào chính đường dẫn (phần sau dấu #) và không được gửi lên máy chủ. Người nhận mở đường dẫn là xem được thư mà không cần tài khoản. Bất kỳ ai có đường dẫn đều xem được thư, và đường dẫn chưa thể thu hồi vì chưa có cơ sở dữ liệu.</p></details>
+<details><summary>Tem trên phong bì có phải tem bưu chính thật không?</summary><p>Không. Tem chỉ là hình trang trí, không có giá trị bưu chính và không có giá tiền.</p></details>
+<details><summary>Bản nháp được lưu ở đâu?</summary><p>Trong bộ nhớ của trình duyệt bạn đang dùng. Xóa dữ liệu trình duyệt sẽ mất bản nháp.</p></details>
+<details><summary>Cách vẽ và dán hình</summary><p>Bấm “Vẽ tay” để vẽ bằng chuột hoặc ngón tay. Bấm một hình dán để thêm lên giấy, kéo để di chuyển, nhấp đúp để xóa.</p></details>
+</section>
+<section class="view" id="v-read"><div class="stage" id="readStage"></div></section>
+</main>
+<footer>
+<strong>ureceivealetter</strong> — nơi viết những lá thư nhỏ.<br>
+Người thực hiện: Lê Hà Linh · <a href="mailto:minjeong37288@gmail.com">minjeong37288@gmail.com</a>
+</footer>
+<div id="toastHost" aria-live="polite"></div>
+<script>
+const C="Việt Nam|Vietnam|🇻🇳|🏞️,Đài Loan|Taiwan|🇹🇼|🏙️,Nhật Bản|Japan|🇯🇵|🗻,Hàn Quốc|Korea|🇰🇷|🏯,Trung Quốc|China|🇨🇳|🐼,Thái Lan|Thailand|🇹🇭|🛕,Singapore|Singapore|🇸🇬|🦁,Malaysia|Malaysia|🇲🇾|🌆,Indonesia|Indonesia|🇮🇩|🌋,Philippines|Philippines|🇵🇭|🏝️,Ấn Độ|India|🇮🇳|🕌,Hoa Kỳ|USA|🇺🇸|🗽,Canada|Canada|🇨🇦|🍁,Vương quốc Anh|UK|🇬🇧|🎡,Pháp|France|🇫🇷|🗼,Đức|Germany|🇩🇪|🏰,Ý|Italy|🇮🇹|🏛️,Tây Ban Nha|Spain|🇪🇸|💃,Bồ Đào Nha|Portugal|🇵🇹|⛵,Hà Lan|Netherlands|🇳🇱|🌷,Thụy Sĩ|Switzerland|🇨🇭|🏔️,Úc|Australia|🇦🇺|🦘,New Zealand|New Zealand|🇳🇿|🥝,Brazil|Brazil|🇧🇷|🌴,Mexico|Mexico|🇲🇽|🌵,Argentina|Argentina|🇦🇷|🥩,Ai Cập|Egypt|🇪🇬|🔺,Nam Phi|South Africa|🇿🇦|🦒,Thổ Nhĩ Kỳ|Türkiye|🇹🇷|🎈,Na Uy|Norway|🇳🇴|🌌".split(",").map(s=>s.split("|"));
+const ENV=["#F5EBDD","#E8B9C5","#D7E7F3","#C9D7C2","#DCD5F0","#F6E7B0","#C9A27A","#8A2B3C","#2B3A5C","#3b3836"];
+const PAP=["#fffdf8","#FFF8EF","#F5DDE2","#D7E7F3","#E9F0E4","#F3EFFA"];
+const INK=["#34312F","#795C50","#8A2B3C","#2B4C7E","#3E6B52","#6B4FA0"];
+const DRC=["#34312F","#795C50","#E8B9C5","#d6456b","#e8833a","#F6C945","#7aa874","#4f9ac2","#2B3A5C","#9b7fd1","#ffffff","#000000"];
+const FONTS=[["Lora","'Lora',serif"],["Playfair Display","'Playfair Display',serif"],["Be Vietnam Pro","'Be Vietnam Pro',sans-serif"],["Caveat (viết tay)","'Caveat',cursive"],["Roboto Mono (đánh máy)","'Roboto Mono',monospace"]];
+const SB=["#d7e7f3","#f5dde2","#f6e7b0"],EMO="💌 ♡ ✦ 🌷 ☁️ ⭐ 🎀 🌙 🐱 🍰 ☕ ✈️ 🌸 🍓".split(" ");
+const $=s=>document.querySelector(s),RM=matchMedia("(prefers-reduced-motion:reduce)").matches;
+let S,strokes=[],stk=[],dcol="#34312F";
+const def=()=>({f:"",t:"",fc:0,tc:1,ec:ENV[1],st:0,ft:0,sz:19,ic:INK[0],pc:PAP[0],msg:"",dr:[],sk:[]});
+const toast=m=>{const e=document.createElement("div");e.className="toast";e.textContent=m;$("#toastHost").append(e);setTimeout(()=>e.remove(),2800)};
+const enc=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+const dec=s=>JSON.parse(decodeURIComponent(escape(atob(s.replace(/-/g,"+").replace(/_/g,"/")))));
+function go(v){document.querySelectorAll(".view").forEach(e=>e.classList.toggle("on",e.id==="v-"+v));document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-current",b.dataset.go===v?"page":"false"));scrollTo(0,0)}
+document.addEventListener("click",e=>{const g=e.target.closest("[data-go]");if(g){e.preventDefault();go(g.dataset.go)}});
+function mountEnv(host,d,onOpen){const c=C[d.fc]||C[0],t=C[d.tc]||C[1],date=new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}).toUpperCase();
+host.innerHTML=`<button class="env" style="--ec:${d.ec}" aria-label="Mở phong bì"><div class="back"></div><div class="ins"></div><div class="front"></div><div class="flap"></div><div class="stampw"><div class="stamp" style="--sb:${SB[d.st%3]}"><div class="pic">${c[3]}</div>${c[0]}<br>${c[2]}</div></div><div class="pm"><span>${c[1].toUpperCase()}<br>${date}</span></div><div class="addr"><small>From ${c[2]}</small><span class="n1"></span><small>To ${t[2]} ${t[0]}</small><span class="n2"></span></div></button>`;
+const e=host.firstChild;e.querySelector(".n1").textContent=d.f||"…";e.querySelector(".n2").textContent=d.t||"…";
+e.onclick=()=>{if(e.classList.contains("open"))return;e.classList.add("bounce");setTimeout(()=>{e.classList.remove("bounce");e.classList.add("open");setTimeout(()=>onOpen&&onOpen(),RM?0:1300)},RM?0:450)}}
+function reveal(host,d){const env=host.querySelector(".env");env.style.display="none";(host.closest(".stage")||host).querySelectorAll(".hint").forEach(h=>h.remove());const x=document.createElement("div");x.style.cssText="width:100%;display:flex;flex-direction:column;align-items:center;gap:14px";viewPaper(x,d);const b=document.createElement("button");b.className="btn";b.textContent="Đóng thư";b.onclick=()=>{x.remove();env.style.display="";env.classList.remove("open")};x.append(b);host.append(x);x.scrollIntoView({behavior:"auto",block:"start"})}
+function paperVars(p,d){p.style.setProperty("--pc",d.pc);p.style.setProperty("--ic",d.ic);p.style.setProperty("--ff",FONTS[d.ft][1]);p.style.setProperty("--fs",d.sz+"px")}
+function drawStrokes(cv,list){const r=cv.getBoundingClientRect(),dpr=devicePixelRatio||1;cv.width=r.width*dpr;cv.height=r.height*dpr;const x=cv.getContext("2d");x.scale(dpr,dpr);x.lineCap=x.lineJoin="round";
+list.forEach(([c,w,p])=>{x.strokeStyle=c;x.lineWidth=w;x.beginPath();for(let i=0;i<p.length;i+=2){const X=p[i]/1000*r.width,Y=p[i+1]/1000*r.height;i?x.lineTo(X,Y):x.moveTo(X,Y)}if(p.length===2)x.lineTo(p[0]/1000*r.width+.1,p[1]/1000*r.height);x.stroke()})}
+function skEl(s,i,p,edit){const e=document.createElement("span");e.className="sk";e.textContent=s[0];e.style.cssText=`left:${s[1]/10}%;top:${s[2]/10}%;font-size:${s[3]}px`;
+if(edit){e.title="Kéo để di chuyển, nhấp đúp để xóa";let dr=0;
+e.onpointerdown=ev=>{dr=1;e.setPointerCapture(ev.pointerId);ev.preventDefault()};
+e.onpointermove=ev=>{if(!dr)return;const r=p.getBoundingClientRect();s[1]=Math.max(0,Math.min(1000,Math.round((ev.clientX-r.left)/r.width*1000)));s[2]=Math.max(0,Math.min(1000,Math.round((ev.clientY-r.top)/r.height*1000)));e.style.left=s[1]/10+"%";e.style.top=s[2]/10+"%"};
+e.onpointerup=()=>{dr=0;save()};e.ondblclick=()=>{stk.splice(i,1);renderSk();save()}}
+return e}
+function renderSk(){const p=$("#editPaper");p.querySelectorAll(".sk").forEach(e=>e.remove());stk.forEach((s,i)=>p.append(skEl(s,i,p,true)))}
+function viewPaper(host,d){const w=document.createElement("div");w.innerHTML='<div class="paper view"><div class="txt"></div><canvas></canvas></div>';const p=w.firstChild;host.append(p);paperVars(p,d);p.querySelector(".txt").textContent=d.msg;(d.sk||[]).forEach((s,i)=>p.append(skEl(s,i,p,false)));requestAnimationFrame(()=>drawStrokes(p.querySelector("canvas"),d.dr||[]));new ResizeObserver(()=>drawStrokes(p.querySelector("canvas"),d.dr||[])).observe(p)}
+function swatches(id,arr,key){const h=$(id);arr.forEach(c=>{const b=document.createElement("button");b.style.background=c;b.dataset.c=c;b.setAttribute("aria-label","Màu "+c);b.onclick=()=>{S[key]=c;sync();save()};h.append(b)})}
+function sync(){[["ecs","ec"],["pcs","pc"],["ics","ic"]].forEach(([i,k])=>document.querySelectorAll("#"+i+" button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.c===S[k])));paperVars($("#editPaper"),S)}
+function save(){S.msg=$("#ta").value;S.f=$("#f").value;S.t=$("#t").value;S.dr=strokes;S.sk=stk;const s=$("#status");
+try{localStorage.setItem("ura-draft",JSON.stringify(S));s.className="status";s.textContent="Đã lưu bản nháp trên trình duyệt này."}catch(e){s.className="status err";s.textContent="Không thể lưu bản nháp trên trình duyệt này."}}
+function initEditor(){let d=null;try{d=JSON.parse(localStorage.getItem("ura-draft"))}catch(e){}S=Object.assign(def(),d||{});strokes=S.dr||[];stk=S.sk||[];
+const names=C.map(c=>c[2]+" "+c[0]+" · "+c[1]);const fill=(s,a)=>a.forEach((x,i)=>s.add(new Option(x,i)));
+fill($("#fc"),names);fill($("#tc"),names);fill($("#st"),["Mẫu 1","Mẫu 2","Mẫu 3"]);fill($("#ft"),FONTS.map(f=>f[0]));
+swatches("#ecs",ENV,"ec");swatches("#pcs",PAP,"pc");swatches("#ics",INK,"ic");
+const p=$("#editPaper");p.innerHTML='<textarea id="ta" placeholder="Dear…" aria-label="Nội dung thư" maxlength="3000"></textarea><canvas></canvas>';
+$("#ta").value=S.msg;$("#f").value=S.f;$("#t").value=S.t;$("#fc").value=S.fc;$("#tc").value=S.tc;$("#st").value=S.st;$("#ft").value=S.ft;$("#sz").value=S.sz;
+$("#ta").oninput=$("#f").oninput=$("#t").oninput=save;
+["fc","tc","st","ft"].forEach(k=>$("#"+k).onchange=e=>{S[k]=+e.target.value;sync();save()});
+$("#sz").oninput=e=>{S.sz=+e.target.value;sync();save()};
+DRC.forEach(c=>{const b=document.createElement("button");b.style.background=c;b.setAttribute("aria-label","Màu bút "+c);b.onclick=()=>dcol=c;$("#dcs").append(b)});
+EMO.forEach(e=>{const b=document.createElement("button");b.textContent=e;b.setAttribute("aria-label","Thêm hình dán "+e);b.onclick=()=>{if(stk.length>=30)return toast("Tối đa 30 hình dán trên một lá thư.");stk.push([e,500,500,36]);renderSk();save()};$("#emo").append(b)});
+const cv=p.querySelector("canvas");let cur=null;
+const pos=ev=>{const r=cv.getBoundingClientRect();return[Math.round((ev.clientX-r.left)/r.width*1000),Math.round((ev.clientY-r.top)/r.height*1000)]};
+cv.onpointerdown=ev=>{cv.setPointerCapture(ev.pointerId);cur=[dcol,+$("#pw").value,pos(ev)];strokes.push(cur)};
+cv.onpointermove=ev=>{if(!cur)return;cur[2].push(...pos(ev));drawStrokes(cv,strokes)};
+cv.onpointerup=cv.onpointercancel=()=>{if(cur){cur=null;save()}};
+const setMode=m=>{p.classList.toggle("draw",m==="draw");$("#mDraw").setAttribute("aria-pressed",m==="draw");$("#mText").setAttribute("aria-pressed",m==="text");$("#drawOpts").hidden=m!=="draw"};
+$("#mText").onclick=()=>setMode("text");$("#mDraw").onclick=()=>setMode("draw");
+$("#mUndo").onclick=()=>{strokes.pop();drawStrokes(cv,strokes);save()};
+$("#mClear").onclick=()=>{if(strokes.length&&confirm("Xóa toàn bộ nét vẽ?")){strokes.length=0;drawStrokes(cv,strokes);save()}};
+$("#bPrev").onclick=()=>{save();const h=$("#envPrev");mountEnv(h,S,()=>reveal(h,S));const ev=h.querySelector(".env");h.insertAdjacentHTML("afterbegin",'<span class="hint">Đang mở phong bì xem trước…</span>');ev.scrollIntoView({behavior:RM?"auto":"smooth",block:"center"});setTimeout(()=>ev.click(),RM?0:700)};
+$("#bLink").onclick=()=>{save();if(!S.msg.trim())return toast("Hãy viết nội dung thư trước khi tạo đường dẫn.");
+const url=location.href.split("#")[0]+"#l="+enc(S);$("#shareBox").innerHTML='<div class="share"><strong>Đường dẫn đã sẵn sàng.</strong><br>Bất kỳ ai có đường dẫn này đều đọc được thư. Đường dẫn chưa thể thu hồi.<input readonly id="lk"><button class="btn primary" id="cp">Sao chép đường dẫn</button></div>';
+$("#lk").value=url;$("#cp").onclick=async()=>{try{await navigator.clipboard.writeText(url);toast("Đã sao chép đường dẫn.")}catch(e){$("#lk").select();toast("Hãy sao chép thủ công từ ô bên trên.")}};
+if(url.length>7000)toast("Thư khá dài, một số ứng dụng nhắn tin có thể cắt đường dẫn.")};
+sync();renderSk();addEventListener("resize",()=>drawStrokes(cv,strokes));
+const o=new ResizeObserver(()=>drawStrokes(cv,strokes));o.observe(p)}
+initEditor();
+const demo=Object.assign(def(),{f:"Linh",t:"Kim",fc:0,tc:1});
+mountEnv($("#heroEnv"),demo,()=>setTimeout(()=>mountEnv($("#heroEnv"),demo),1800));
+const m=location.hash.match(/^#l=(.+)$/);
+if(m){go("read");document.body.classList.add("viewer");try{const d=Object.assign(def(),dec(m[1])),h=document.createElement("div");$("#readStage").innerHTML='<span class="hint">Chạm vào phong bì để mở thư</span>';$("#readStage").append(h);
+mountEnv(h,d,()=>reveal(h,d))}
+catch(e){$("#readStage").innerHTML='<p class="err">Không thể mở thư: đường dẫn bị thiếu hoặc không hợp lệ. Hãy nhờ người gửi chia sẻ lại.</p>'}}
+else go("home");
+</script>
+</body>
+</html>
