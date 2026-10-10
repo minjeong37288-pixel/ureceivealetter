@@ -55,7 +55,7 @@ main{max-width:960px;margin:0 auto;padding:24px 16px 48px}
 .paper canvas{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none}
 .paper.draw canvas{pointer-events:auto;touch-action:none;cursor:crosshair}
 .sk{position:absolute;z-index:3;transform:translate(-50%,-50%);line-height:1;cursor:grab;user-select:none;touch-action:none}
-.paper.view .sk{cursor:default}
+.paper.ro .sk{cursor:default}
 .composer{display:grid;gap:22px;grid-template-columns:minmax(0,1fr)}
 @media(min-width:900px){.composer{grid-template-columns:300px minmax(0,1fr)}}
 .panel{background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:18px;padding:16px;display:grid;gap:12px;align-content:start}
@@ -76,8 +76,8 @@ input,select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid
 footer{max-width:960px;margin:0 auto;padding:24px 16px 40px;border-top:1px solid var(--line);color:var(--cocoa);font-size:.9rem}
 details{border-bottom:1px solid var(--line);padding:10px 0}summary{cursor:pointer;font-weight:500}
 .viewer header,.viewer footer{display:none}
-.paper.view{animation:rise .6s ease;aspect-ratio:auto;overflow:visible;min-height:calc(min(440px,100vw - 32px)*1.333)}
-.paper.view .txt{position:relative;inset:auto;width:100%;height:auto;overflow:visible}
+.paper.ro{animation:rise .6s ease;aspect-ratio:auto;overflow:visible;min-height:calc(min(440px,100vw - 32px)*1.333)}
+.paper.ro .txt{position:relative;inset:auto;width:100%;height:auto;overflow:visible}
 @keyframes rise{from{opacity:0;transform:translateY(40px)}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -163,6 +163,8 @@ const def=()=>({f:"",t:"",fc:0,tc:1,ec:ENV[1],st:0,ft:0,sz:19,ic:INK[0],pc:PAP[0
 const toast=m=>{const e=document.createElement("div");e.className="toast";e.textContent=m;$("#toastHost").append(e);setTimeout(()=>e.remove(),2800)};
 const enc=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
 const dec=s=>JSON.parse(decodeURIComponent(escape(atob(s.replace(/-/g,"+").replace(/_/g,"/")))));
+async function zip(o){const st=new Blob([JSON.stringify(o)]).stream().pipeThrough(new CompressionStream("deflate-raw"));const u=new Uint8Array(await new Response(st).arrayBuffer());let b="";u.forEach(c=>b+=String.fromCharCode(c));return btoa(b).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
+async function unzip(x){const u=Uint8Array.from(atob(x.replace(/-/g,"+").replace(/_/g,"/")),c=>c.charCodeAt(0));const st=new Blob([u]).stream().pipeThrough(new DecompressionStream("deflate-raw"));return JSON.parse(await new Response(st).text())}
 function go(v){document.querySelectorAll(".view").forEach(e=>e.classList.toggle("on",e.id==="v-"+v));document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-current",b.dataset.go===v?"page":"false"));scrollTo(0,0)}
 document.addEventListener("click",e=>{const g=e.target.closest("[data-go]");if(g){e.preventDefault();go(g.dataset.go)}});
 function mountEnv(host,d,onOpen){const c=C[d.fc]||C[0],t=C[d.tc]||C[1],date=new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}).toUpperCase();
@@ -180,7 +182,7 @@ e.onpointermove=ev=>{if(!dr)return;const r=p.getBoundingClientRect();s[1]=Math.m
 e.onpointerup=()=>{dr=0;save()};e.ondblclick=()=>{stk.splice(i,1);renderSk();save()}}
 return e}
 function renderSk(){const p=$("#editPaper");p.querySelectorAll(".sk").forEach(e=>e.remove());stk.forEach((s,i)=>p.append(skEl(s,i,p,true)))}
-function viewPaper(host,d){const w=document.createElement("div");w.innerHTML='<div class="paper view"><div class="txt"></div><canvas></canvas></div>';const p=w.firstChild;host.append(p);paperVars(p,d);p.querySelector(".txt").textContent=d.msg;(d.sk||[]).forEach((s,i)=>p.append(skEl(s,i,p,false)));requestAnimationFrame(()=>drawStrokes(p.querySelector("canvas"),d.dr||[]));new ResizeObserver(()=>drawStrokes(p.querySelector("canvas"),d.dr||[])).observe(p)}
+function viewPaper(host,d){const w=document.createElement("div");w.innerHTML='<div class="paper ro"><div class="txt"></div><canvas></canvas></div>';const p=w.firstChild;host.append(p);paperVars(p,d);p.querySelector(".txt").textContent=d.msg;(d.sk||[]).forEach((s,i)=>p.append(skEl(s,i,p,false)));requestAnimationFrame(()=>drawStrokes(p.querySelector("canvas"),d.dr||[]));new ResizeObserver(()=>drawStrokes(p.querySelector("canvas"),d.dr||[])).observe(p)}
 function swatches(id,arr,key){const h=$(id);arr.forEach(c=>{const b=document.createElement("button");b.style.background=c;b.dataset.c=c;b.setAttribute("aria-label","Màu "+c);b.onclick=()=>{S[key]=c;sync();save()};h.append(b)})}
 function sync(){[["ecs","ec"],["pcs","pc"],["ics","ic"]].forEach(([i,k])=>document.querySelectorAll("#"+i+" button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.c===S[k])));paperVars($("#editPaper"),S)}
 function save(){S.msg=$("#ta").value;S.f=$("#f").value;S.t=$("#t").value;S.dr=strokes;S.sk=stk;const s=$("#status");
@@ -206,8 +208,8 @@ $("#mText").onclick=()=>setMode("text");$("#mDraw").onclick=()=>setMode("draw");
 $("#mUndo").onclick=()=>{strokes.pop();drawStrokes(cv,strokes);save()};
 $("#mClear").onclick=()=>{if(strokes.length&&confirm("Xóa toàn bộ nét vẽ?")){strokes.length=0;drawStrokes(cv,strokes);save()}};
 $("#bPrev").onclick=()=>{save();const h=$("#envPrev");mountEnv(h,S,()=>reveal(h,S));const ev=h.querySelector(".env");h.insertAdjacentHTML("afterbegin",'<span class="hint">Đang mở phong bì xem trước…</span>');ev.scrollIntoView({behavior:RM?"auto":"smooth",block:"center"});setTimeout(()=>ev.click(),RM?0:700)};
-$("#bLink").onclick=()=>{save();if(!S.msg.trim())return toast("Hãy viết nội dung thư trước khi tạo đường dẫn.");
-const url=location.href.split("#")[0]+"#l="+enc(S);$("#shareBox").innerHTML='<div class="share"><strong>Đường dẫn đã sẵn sàng.</strong><br>Bất kỳ ai có đường dẫn này đều đọc được thư. Đường dẫn chưa thể thu hồi.<input readonly id="lk"><button class="btn primary" id="cp">Sao chép đường dẫn</button></div>';
+$("#bLink").onclick=async()=>{save();if(!S.msg.trim())return toast("Hãy viết nội dung thư trước khi tạo đường dẫn.");
+const url=location.href.split("#")[0]+(window.CompressionStream?"#c="+await zip(S):"#l="+enc(S));$("#shareBox").innerHTML='<div class="share"><strong>Đường dẫn đã sẵn sàng.</strong><br>Bất kỳ ai có đường dẫn này đều đọc được thư. Đường dẫn chưa thể thu hồi.<input readonly id="lk"><button class="btn primary" id="cp">Sao chép đường dẫn</button></div>';
 $("#lk").value=url;$("#cp").onclick=async()=>{try{await navigator.clipboard.writeText(url);toast("Đã sao chép đường dẫn.")}catch(e){$("#lk").select();toast("Hãy sao chép thủ công từ ô bên trên.")}};
 if(url.length>7000)toast("Thư khá dài, một số ứng dụng nhắn tin có thể cắt đường dẫn.")};
 sync();renderSk();addEventListener("resize",()=>drawStrokes(cv,strokes));
@@ -215,10 +217,10 @@ const o=new ResizeObserver(()=>drawStrokes(cv,strokes));o.observe(p)}
 initEditor();
 const demo=Object.assign(def(),{f:"Linh",t:"Kim",fc:0,tc:1});
 mountEnv($("#heroEnv"),demo,()=>setTimeout(()=>mountEnv($("#heroEnv"),demo),1800));
-const m=location.hash.match(/^#l=(.+)$/);
-if(m){go("read");document.body.classList.add("viewer");try{const d=Object.assign(def(),dec(m[1])),h=document.createElement("div");$("#readStage").innerHTML='<span class="hint">Chạm vào phong bì để mở thư</span>';$("#readStage").append(h);
+const m=location.hash.match(/^#([lc])=(.+)$/);
+if(m){go("read");document.body.classList.add("viewer");(async()=>{try{const d=Object.assign(def(),m[1]==="c"?await unzip(m[2]):dec(m[2])),h=document.createElement("div");$("#readStage").innerHTML='<span class="hint">Chạm vào phong bì để mở thư</span>';$("#readStage").append(h);
 mountEnv(h,d,()=>reveal(h,d))}
-catch(e){$("#readStage").innerHTML='<p class="err">Không thể mở thư: đường dẫn bị thiếu hoặc không hợp lệ. Hãy nhờ người gửi chia sẻ lại.</p>'}}
+catch(e){$("#readStage").innerHTML='<p class="err">Không thể mở thư: đường dẫn bị thiếu hoặc không hợp lệ. Hãy nhờ người gửi chia sẻ lại.</p>'}})()}
 else go("home");
 </script>
 </body>
